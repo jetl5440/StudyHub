@@ -1,6 +1,6 @@
 # StudyHub – SEG2105 Fall 2026 Project
 
-**Team:** group1   <!-- replace with your team name -->
+**Team:** Group 122
 
 **GitHub repository:** https://github.com/jetl5440/StudyHub
 
