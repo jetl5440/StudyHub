@@ -2,13 +2,13 @@
 
 **Team:** group1   <!-- replace with your team name -->
 
-**GitHub repository:** https://github.com/YOUR-ORG/YOUR-REPO   <!-- replace -->
+**GitHub repository:** https://github.com/jetl5440/StudyHub
 
 ## Team members
 
 | Name | Student number |
 |------|----------------|
-| Member 1 | 000000000 |
+| Jet Lin | 300471562 |
 
 ## Deliverable 1 – User accounts
 
