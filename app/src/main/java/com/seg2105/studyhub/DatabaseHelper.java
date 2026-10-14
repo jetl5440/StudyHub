@@ -24,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "firstName TEXT, "
                 + "lastName TEXT, "
-                + "email TEXT COLLATE NOCASE, "
+                + "email TEXT, "
                 + "username TEXT UNIQUE COLLATE NOCASE, "
                 + "password TEXT, "
                 + "role TEXT, "
@@ -62,20 +62,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    // Usernames and emails are compared without caring about upper/lower case
+    // Usernames are compared without caring about upper/lower case
     public boolean usernameExists(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_USERS
                 + " WHERE username = ? COLLATE NOCASE", new String[]{username});
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
-    }
-
-    public boolean emailExists(String email) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_USERS
-                + " WHERE email = ? COLLATE NOCASE", new String[]{email});
         boolean exists = cursor.getCount() > 0;
         cursor.close();
         return exists;
