@@ -14,6 +14,9 @@ public class RegisterActivity extends Activity {
     private EditText firstNameInput, lastNameInput, emailInput, usernameInput;
     private EditText studentNumberInput, passwordInput, confirmPasswordInput;
     private RadioButton studentRadio, leaderRadio;
+
+    // Letters only, but allows names like "Mary-Jane", "O'Brien" or "De Silva"
+    private static final String NAME_PATTERN = "[a-zA-Z]+([ '-][a-zA-Z]+)*";
     private DatabaseHelper db;
 
     @Override
@@ -59,6 +62,11 @@ public class RegisterActivity extends Activity {
             return;
         }
 
+        if (db.emailExists(email)) {
+            emailInput.setError("An account with this email already exists");
+            return;
+        }
+
         Student newUser;
         if (leaderRadio.isChecked()) {
             newUser = new StudyGroupLeader(firstName, lastName, email, username, password, studentNumber);
@@ -88,7 +96,7 @@ public class RegisterActivity extends Activity {
         if (firstName.isEmpty()) {
             firstNameInput.setError("First name is required");
             valid = false;
-        } else if (!firstName.matches("[a-zA-Z' -]+")) {
+        } else if (!firstName.matches(NAME_PATTERN)) {
             firstNameInput.setError("First name can only contain letters");
             valid = false;
         }
@@ -96,7 +104,7 @@ public class RegisterActivity extends Activity {
         if (lastName.isEmpty()) {
             lastNameInput.setError("Last name is required");
             valid = false;
-        } else if (!lastName.matches("[a-zA-Z' -]+")) {
+        } else if (!lastName.matches(NAME_PATTERN)) {
             lastNameInput.setError("Last name can only contain letters");
             valid = false;
         }
@@ -125,12 +133,18 @@ public class RegisterActivity extends Activity {
             valid = false;
         }
 
-        if (password.length() < 6) {
+        if (password.isEmpty()) {
+            passwordInput.setError("Password is required");
+            valid = false;
+        } else if (password.length() < 6) {
             passwordInput.setError("Password must be at least 6 characters");
             valid = false;
         }
 
-        if (!confirmPassword.equals(password)) {
+        if (confirmPassword.isEmpty()) {
+            confirmPasswordInput.setError("Please confirm your password");
+            valid = false;
+        } else if (!confirmPassword.equals(password)) {
             confirmPasswordInput.setError("Passwords do not match");
             valid = false;
         }

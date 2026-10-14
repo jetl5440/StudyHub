@@ -20,7 +20,16 @@ public class WelcomeActivity extends Activity {
 
         DatabaseHelper db = new DatabaseHelper(this);
         String username = getIntent().getStringExtra("username");
-        User user = db.getUser(username);
+        User user = null;
+        if (username != null) {
+            user = db.getUser(username);
+        }
+
+        // Should not happen, but if the account can't be found go back to the login screen
+        if (user == null) {
+            logout();
+            return;
+        }
 
         TextView welcomeText = findViewById(R.id.welcomeText);
         welcomeText.setText("Welcome " + user.getFirstName() + "! You are logged in as \""

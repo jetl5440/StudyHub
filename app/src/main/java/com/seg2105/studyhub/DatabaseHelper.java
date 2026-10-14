@@ -24,8 +24,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "firstName TEXT, "
                 + "lastName TEXT, "
-                + "email TEXT, "
-                + "username TEXT UNIQUE, "
+                + "email TEXT COLLATE NOCASE, "
+                + "username TEXT UNIQUE COLLATE NOCASE, "
                 + "password TEXT, "
                 + "role TEXT, "
                 + "studentNumber TEXT)");
@@ -62,10 +62,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    // Usernames and emails are compared without caring about upper/lower case
     public boolean usernameExists(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_USERS + " WHERE username = ?",
-                new String[]{username});
+        Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_USERS
+                + " WHERE username = ? COLLATE NOCASE", new String[]{username});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
+    public boolean emailExists(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_USERS
+                + " WHERE email = ? COLLATE NOCASE", new String[]{email});
         boolean exists = cursor.getCount() > 0;
         cursor.close();
         return exists;
@@ -75,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public User login(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS
-                + " WHERE username = ? AND password = ?", new String[]{username, password});
+                + " WHERE username = ? COLLATE NOCASE AND password = ?", new String[]{username, password});
         User user = null;
         if (cursor.moveToFirst()) {
             user = cursorToUser(cursor);
@@ -86,8 +96,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public User getUser(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ?",
-                new String[]{username});
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS
+                + " WHERE username = ? COLLATE NOCASE", new String[]{username});
         User user = null;
         if (cursor.moveToFirst()) {
             user = cursorToUser(cursor);
