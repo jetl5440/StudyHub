@@ -21,3 +21,7 @@
 - Log Out returns to the login screen.
 - All registration fields are validated (names, email, username, student number, password, password confirmation). Login checks for empty fields.
 - Optional: the admin's welcome screen lists every user created so far.
+
+## Resources
+
+- The SQLite database code (`DatabaseHelper`) was written with help from outside resources, mainly the Android Developers guide on saving data with SQLite: https://developer.android.com/training/data-storage/sqlite
