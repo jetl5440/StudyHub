@@ -22,6 +22,14 @@
 - All registration fields are validated (names, email, username, student number, password, password confirmation). Login checks for empty fields.
 - Optional: the admin's welcome screen lists every user created so far.
 
+## Deliverable 2 – Admin functionality
+
+Log in as the admin (`admin` / `XPI76SZUqyCjVxgnUjm0`) to see two extra buttons on the welcome screen:
+
+- **Manage Categories** – lists all course categories. Tap **Add Category** to create one (name and description). Tap a category to **edit** or **delete** it.
+- **Manage Users** – lists every account registered in the app. Tap a student or study group leader to **disable/enable** or **delete** their account. A disabled account can't log in. The admin account can't be disabled or deleted.
+- Category fields are validated: name and description are required, names must be unique and can only use letters, numbers, spaces, & and -.
+
 ## Resources
 
 - The SQLite database code (`DatabaseHelper`) was written with help from outside resources, mainly the Android Developers guide on saving data with SQLite: https://developer.android.com/training/data-storage/sqlite

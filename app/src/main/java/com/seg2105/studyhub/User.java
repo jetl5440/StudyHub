@@ -7,6 +7,7 @@ public abstract class User {
     private String email;
     private String username;
     private String password;
+    private boolean disabled; // a disabled account can't log in
 
     public User(String firstName, String lastName, String email, String username, String password) {
         this.firstName = firstName;
@@ -24,4 +25,7 @@ public abstract class User {
     public String getEmail() { return email; }
     public String getUsername() { return username; }
     public String getPassword() { return password; }
+
+    public boolean isDisabled() { return disabled; }
+    public void setDisabled(boolean disabled) { this.disabled = disabled; }
 }

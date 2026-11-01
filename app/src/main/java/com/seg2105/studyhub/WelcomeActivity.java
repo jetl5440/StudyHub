@@ -4,12 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 public class WelcomeActivity extends Activity {
 
@@ -43,19 +39,26 @@ public class WelcomeActivity extends Activity {
             }
         });
 
-        // Only the admin can see the list of all users
+        // Only the admin can manage users and categories
         if (user.getRole().equals("Admin")) {
-            TextView usersTitle = findViewById(R.id.usersTitle);
-            ListView usersList = findViewById(R.id.usersList);
-            usersTitle.setVisibility(View.VISIBLE);
-            usersList.setVisibility(View.VISIBLE);
+            Button manageUsersButton = findViewById(R.id.manageUsersButton);
+            Button manageCategoriesButton = findViewById(R.id.manageCategoriesButton);
+            manageUsersButton.setVisibility(View.VISIBLE);
+            manageCategoriesButton.setVisibility(View.VISIBLE);
 
-            ArrayList<String> rows = new ArrayList<>();
-            for (User u : db.getAllUsers()) {
-                rows.add(u.getFirstName() + " " + u.getLastName() + " (" + u.getUsername() + ")\n"
-                        + u.getRole() + " - " + u.getEmail());
-            }
-            usersList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, rows));
+            manageUsersButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(WelcomeActivity.this, ManageUsersActivity.class));
+                }
+            });
+
+            manageCategoriesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(WelcomeActivity.this, CategoriesActivity.class));
+                }
+            });
         }
     }
 

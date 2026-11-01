@@ -64,6 +64,11 @@ public class LoginActivity extends Activity {
             return;
         }
 
+        if (user.isDisabled()) {
+            Toast.makeText(this, "This account has been disabled by the admin", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         passwordInput.setText("");
         Intent intent = new Intent(this, WelcomeActivity.class);
         intent.putExtra("username", user.getUsername());

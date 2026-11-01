@@ -27,6 +27,18 @@
         <activity
             android:name=".WelcomeActivity"
             android:label="Welcome" />
+
+        <activity
+            android:name=".ManageUsersActivity"
+            android:label="Manage Users" />
+
+        <activity
+            android:name=".CategoriesActivity"
+            android:label="Categories" />
+
+        <activity
+            android:name=".CategoryEditActivity"
+            android:label="Category" />
     </application>
 
 </manifest>

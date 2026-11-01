@@ -17,18 +17,18 @@
         android:text="Log Out" />
 
     <!-- Only shown to the admin -->
-    <TextView
-        android:id="@+id/usersTitle"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/manageUsersButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="All users:"
+        android:text="Manage Users"
         android:visibility="gone" />
 
-    <ListView
-        android:id="@+id/usersList"
+    <Button
+        android:id="@+id/manageCategoriesButton"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="Manage Categories"
         android:visibility="gone" />
 
 </LinearLayout>
