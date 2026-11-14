@@ -1,6 +1,5 @@
 package com.seg2105.studyhub;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 // Student screen: all the information about one course, with edit / delete / tasks buttons
-public class CourseDetailActivity extends Activity {
+public class CourseDetailActivity extends BackButtonActivity {
 
     private DatabaseHelper db;
     private String username;

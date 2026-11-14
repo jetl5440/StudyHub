@@ -1,6 +1,5 @@
 package com.seg2105.studyhub;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -13,7 +12,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 // Used for both adding a new course and editing an existing one
-public class CourseEditActivity extends Activity {
+public class CourseEditActivity extends BackButtonActivity {
 
     private static final String[] SEASONS = {"Fall", "Winter", "Summer"};
 

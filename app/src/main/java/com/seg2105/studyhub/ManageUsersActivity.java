@@ -1,6 +1,5 @@
 package com.seg2105.studyhub;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -13,7 +12,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 // Admin screen: see every account, and disable/enable or delete students and group leaders
-public class ManageUsersActivity extends Activity {
+public class ManageUsersActivity extends BackButtonActivity {
 
     private DatabaseHelper db;
     private ListView usersList;

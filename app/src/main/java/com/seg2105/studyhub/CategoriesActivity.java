@@ -1,6 +1,5 @@
 package com.seg2105.studyhub;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 // Admin screen: list course categories, add new ones, and edit or delete existing ones
-public class CategoriesActivity extends Activity {
+public class CategoriesActivity extends BackButtonActivity {
 
     private DatabaseHelper db;
     private ListView categoriesList;

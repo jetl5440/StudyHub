@@ -1,6 +1,5 @@
 package com.seg2105.studyhub;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 // Student screen: list of the signed-in student's courses
-public class CoursesActivity extends Activity {
+public class CoursesActivity extends BackButtonActivity {
 
     private DatabaseHelper db;
     private String username;

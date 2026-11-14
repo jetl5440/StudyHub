@@ -1,6 +1,5 @@
 package com.seg2105.studyhub;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 // Student screen: tasks of one course. Tap a task to edit it, mark it completed or delete it.
-public class TasksActivity extends Activity {
+public class TasksActivity extends BackButtonActivity {
 
     private DatabaseHelper db;
     private String username;

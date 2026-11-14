@@ -1,6 +1,5 @@
 package com.seg2105.studyhub;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,7 +7,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 // Used for both adding a new category and editing an existing one
-public class CategoryEditActivity extends Activity {
+public class CategoryEditActivity extends BackButtonActivity {
 
     private EditText nameInput;
     private EditText descriptionInput;

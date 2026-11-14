@@ -1,6 +1,5 @@
 package com.seg2105.studyhub;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -9,7 +8,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-public class RegisterActivity extends Activity {
+public class RegisterActivity extends BackButtonActivity {
 
     private EditText firstNameInput, lastNameInput, emailInput, usernameInput;
     private EditText studentNumberInput, passwordInput, confirmPasswordInput;

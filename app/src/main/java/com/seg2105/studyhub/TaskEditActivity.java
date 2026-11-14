@@ -1,6 +1,5 @@
 package com.seg2105.studyhub;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +15,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 // Used for both adding a new task and editing an existing one
-public class TaskEditActivity extends Activity {
+public class TaskEditActivity extends BackButtonActivity {
 
     private DatabaseHelper db;
     private String username;
