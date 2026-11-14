@@ -39,6 +39,26 @@
         <activity
             android:name=".CategoryEditActivity"
             android:label="Category" />
+
+        <activity
+            android:name=".CoursesActivity"
+            android:label="My Courses" />
+
+        <activity
+            android:name=".CourseDetailActivity"
+            android:label="Course Details" />
+
+        <activity
+            android:name=".CourseEditActivity"
+            android:label="Course" />
+
+        <activity
+            android:name=".TasksActivity"
+            android:label="Tasks" />
+
+        <activity
+            android:name=".TaskEditActivity"
+            android:label="Task" />
     </application>
 
 </manifest>

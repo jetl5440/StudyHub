@@ -11,9 +11,11 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "studyhub.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_CATEGORIES = "categories";
+    private static final String TABLE_COURSES = "courses";
+    private static final String TABLE_TASKS = "tasks";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -33,6 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "disabled INTEGER DEFAULT 0)");
 
         createCategoriesTable(db);
+        createCoursesAndTasksTables(db);
 
         // The single admin account is created when the database is first made
         ContentValues admin = new ContentValues();
@@ -52,6 +55,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "description TEXT)");
     }
 
+    private void createCoursesAndTasksTables(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + TABLE_COURSES + " ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "owner TEXT, "
+                + "code TEXT, "
+                + "title TEXT, "
+                + "categoryId INTEGER, "
+                + "term TEXT, "
+                + "location TEXT)");
+
+        db.execSQL("CREATE TABLE " + TABLE_TASKS + " ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "courseId INTEGER, "
+                + "owner TEXT, "
+                + "title TEXT, "
+                + "description TEXT, "
+                + "dueDate TEXT, "
+                + "status TEXT)");
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Version 2 (Deliverable 2) added disabled accounts and course categories.
@@ -59,6 +82,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion < 2) {
             db.execSQL("ALTER TABLE " + TABLE_USERS + " ADD COLUMN disabled INTEGER DEFAULT 0");
             createCategoriesTable(db);
+        }
+        // Version 3 (Deliverable 3) added students' courses and tasks
+        if (oldVersion < 3) {
+            createCoursesAndTasksTables(db);
         }
     }
 
@@ -159,7 +186,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteUser(String username) {
         SQLiteDatabase db = this.getWritableDatabase();
         // The admin account can never be deleted
-        db.delete(TABLE_USERS, "username = ? AND role != 'Admin'", new String[]{username});
+        int deleted = db.delete(TABLE_USERS, "username = ? AND role != 'Admin'", new String[]{username});
+        if (deleted > 0) {
+            // Also remove the student's courses and tasks so nothing is left behind
+            db.delete(TABLE_TASKS, "owner = ? COLLATE NOCASE", new String[]{username});
+            db.delete(TABLE_COURSES, "owner = ? COLLATE NOCASE", new String[]{username});
+        }
     }
 
     // ---------- Admin: managing course categories ----------
@@ -221,5 +253,173 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return categories;
+    }
+
+    // ---------- Student: managing their own courses ----------
+
+    private ContentValues courseValues(Course course) {
+        ContentValues values = new ContentValues();
+        values.put("owner", course.getOwnerUsername());
+        values.put("code", course.getCode());
+        values.put("title", course.getTitle());
+        values.put("categoryId", course.getCategoryId());
+        values.put("term", course.getTerm());
+        values.put("location", course.getLocation());
+        return values;
+    }
+
+    public boolean addCourse(Course course) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.insert(TABLE_COURSES, null, courseValues(course)) != -1;
+    }
+
+    // Only updates the course if it belongs to the same student
+    public boolean updateCourse(Course course) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.update(TABLE_COURSES, courseValues(course), "id = ? AND owner = ? COLLATE NOCASE",
+                new String[]{String.valueOf(course.getId()), course.getOwnerUsername()}) > 0;
+    }
+
+    // Rule: deleting a course always deletes all of the tasks that belong to it
+    public void deleteCourse(int courseId, String owner) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int deleted = db.delete(TABLE_COURSES, "id = ? AND owner = ? COLLATE NOCASE",
+                new String[]{String.valueOf(courseId), owner});
+        if (deleted > 0) {
+            db.delete(TABLE_TASKS, "courseId = ?", new String[]{String.valueOf(courseId)});
+        }
+    }
+
+    // A student can't have the same course code twice in the same term
+    public boolean courseExists(String owner, String code, String term, int ignoreId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_COURSES
+                        + " WHERE owner = ? COLLATE NOCASE AND code = ? COLLATE NOCASE"
+                        + " AND term = ? COLLATE NOCASE AND id != ?",
+                new String[]{owner, code, term, String.valueOf(ignoreId)});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
+    private Course cursorToCourse(Cursor cursor) {
+        return new Course(cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                cursor.getString(cursor.getColumnIndexOrThrow("owner")),
+                cursor.getString(cursor.getColumnIndexOrThrow("code")),
+                cursor.getString(cursor.getColumnIndexOrThrow("title")),
+                cursor.getInt(cursor.getColumnIndexOrThrow("categoryId")),
+                cursor.getString(cursor.getColumnIndexOrThrow("term")),
+                cursor.getString(cursor.getColumnIndexOrThrow("location")));
+    }
+
+    // Returns the course only if it belongs to this student, otherwise null
+    public Course getCourse(int courseId, String owner) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_COURSES
+                        + " WHERE id = ? AND owner = ? COLLATE NOCASE",
+                new String[]{String.valueOf(courseId), owner});
+        Course course = null;
+        if (cursor.moveToFirst()) {
+            course = cursorToCourse(cursor);
+        }
+        cursor.close();
+        return course;
+    }
+
+    public ArrayList<Course> getCoursesForStudent(String owner) {
+        ArrayList<Course> courses = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_COURSES
+                + " WHERE owner = ? COLLATE NOCASE ORDER BY code", new String[]{owner});
+        while (cursor.moveToNext()) {
+            courses.add(cursorToCourse(cursor));
+        }
+        cursor.close();
+        return courses;
+    }
+
+    // ---------- Student: managing the tasks of a course ----------
+
+    private ContentValues taskValues(Task task) {
+        ContentValues values = new ContentValues();
+        values.put("courseId", task.getCourseId());
+        values.put("owner", task.getOwnerUsername());
+        values.put("title", task.getTitle());
+        values.put("description", task.getDescription());
+        values.put("dueDate", task.getDueDate());
+        values.put("status", task.getStatus());
+        return values;
+    }
+
+    public boolean addTask(Task task) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.insert(TABLE_TASKS, null, taskValues(task)) != -1;
+    }
+
+    public boolean updateTask(Task task) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.update(TABLE_TASKS, taskValues(task), "id = ? AND owner = ? COLLATE NOCASE",
+                new String[]{String.valueOf(task.getId()), task.getOwnerUsername()}) > 0;
+    }
+
+    public void setTaskStatus(int taskId, String owner, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("status", status);
+        db.update(TABLE_TASKS, values, "id = ? AND owner = ? COLLATE NOCASE",
+                new String[]{String.valueOf(taskId), owner});
+    }
+
+    public void deleteTask(int taskId, String owner) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TASKS, "id = ? AND owner = ? COLLATE NOCASE",
+                new String[]{String.valueOf(taskId), owner});
+    }
+
+    private Task cursorToTask(Cursor cursor) {
+        return new Task(cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                cursor.getInt(cursor.getColumnIndexOrThrow("courseId")),
+                cursor.getString(cursor.getColumnIndexOrThrow("owner")),
+                cursor.getString(cursor.getColumnIndexOrThrow("title")),
+                cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                cursor.getString(cursor.getColumnIndexOrThrow("dueDate")),
+                cursor.getString(cursor.getColumnIndexOrThrow("status")));
+    }
+
+    // Returns the task only if it belongs to this student, otherwise null
+    public Task getTask(int taskId, String owner) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TASKS
+                        + " WHERE id = ? AND owner = ? COLLATE NOCASE",
+                new String[]{String.valueOf(taskId), owner});
+        Task task = null;
+        if (cursor.moveToFirst()) {
+            task = cursorToTask(cursor);
+        }
+        cursor.close();
+        return task;
+    }
+
+    // Tasks of one course, the ones due first at the top
+    public ArrayList<Task> getTasksForCourse(int courseId, String owner) {
+        ArrayList<Task> tasks = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_TASKS
+                        + " WHERE courseId = ? AND owner = ? COLLATE NOCASE ORDER BY dueDate",
+                new String[]{String.valueOf(courseId), owner});
+        while (cursor.moveToNext()) {
+            tasks.add(cursorToTask(cursor));
+        }
+        cursor.close();
+        return tasks;
+    }
+
+    public int countTasksForCourse(int courseId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_TASKS + " WHERE courseId = ?",
+                new String[]{String.valueOf(courseId)});
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
     }
 }

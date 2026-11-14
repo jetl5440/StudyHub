@@ -16,6 +16,14 @@
         android:layout_height="wrap_content"
         android:text="Log Out" />
 
+    <!-- Only shown to students and study group leaders -->
+    <Button
+        android:id="@+id/myCoursesButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Courses"
+        android:visibility="gone" />
+
     <!-- Only shown to the admin -->
     <Button
         android:id="@+id/manageUsersButton"

@@ -39,7 +39,8 @@ public class WelcomeActivity extends Activity {
             }
         });
 
-        // Only the admin can manage users and categories
+        // Only the admin can manage users and categories.
+        // Students and study group leaders manage their own courses and tasks instead.
         if (user.getRole().equals("Admin")) {
             Button manageUsersButton = findViewById(R.id.manageUsersButton);
             Button manageCategoriesButton = findViewById(R.id.manageCategoriesButton);
@@ -57,6 +58,18 @@ public class WelcomeActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(WelcomeActivity.this, CategoriesActivity.class));
+                }
+            });
+        } else {
+            final String signedInUsername = user.getUsername();
+            Button myCoursesButton = findViewById(R.id.myCoursesButton);
+            myCoursesButton.setVisibility(View.VISIBLE);
+            myCoursesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(WelcomeActivity.this, CoursesActivity.class);
+                    intent.putExtra("username", signedInUsername);
+                    startActivity(intent);
                 }
             });
         }
