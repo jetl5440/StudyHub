@@ -1,42 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- fitsSystemWindows keeps the screen below the status bar and title bar on newer Android versions -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:fitsSystemWindows="true">
 
-    <TextView
-        android:id="@+id/welcomeText"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <Button
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Log Out" />
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <!-- Only shown to students and study group leaders -->
-    <Button
-        android:id="@+id/myCoursesButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="My Courses"
-        android:visibility="gone" />
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Log Out" />
 
-    <!-- Only shown to the admin -->
-    <Button
-        android:id="@+id/manageUsersButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Manage Users"
-        android:visibility="gone" />
+        <!-- Only shown to students and study group leaders -->
+        <Button
+            android:id="@+id/myCoursesButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My Courses"
+            android:visibility="gone" />
 
-    <Button
-        android:id="@+id/manageCategoriesButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Manage Categories"
-        android:visibility="gone" />
+        <!-- Only shown to the admin -->
+        <Button
+            android:id="@+id/manageUsersButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Manage Users"
+            android:visibility="gone" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/manageCategoriesButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Manage Categories"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</FrameLayout>
